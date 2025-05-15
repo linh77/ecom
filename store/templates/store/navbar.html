@@ -34,8 +34,10 @@
                         <li>
                             <hr class="dropdown-divider"/>
                         </li>
-                        <li><a class="dropdown-item" href="{% url 'category' 'Toys' %}">Toys</a></li>
-                        <li><a class="dropdown-item" href="{% url 'category' 'Chairs' %}">Chairs</a></li>
+                        {% for category in navbar_category %}
+                            <li><a href="{% url 'category' category.name %}"
+                                   class="dropdown-item">{{ category.name }} </a></li>
+                        {% endfor %}
                     </ul>
                 </li>
             </ul>
