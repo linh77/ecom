@@ -56,25 +56,25 @@ class LoginForm(forms.Form):
 
 
 class UserInfoForm(forms.ModelForm):
-    phone = forms.CharField(label="", widget=forms.TextInput(attrs={
+    phone = forms.CharField(label="Phone Number", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Phone Number'}), required=False)
-    address1 = forms.CharField( label="", widget=forms.TextInput(attrs={
+    address1 = forms.CharField( label="Address", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Address Line 1'}), required=False)
-    address2 = forms.CharField( label="", widget=forms.TextInput(attrs={
+    address2 = forms.CharField( label="Address", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Address Line 2'}), required=False)
-    city = forms.CharField( label="", widget=forms.TextInput(attrs={
+    city = forms.CharField( label="City", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'City'}), required=False)
-    state = forms.CharField( label="", widget=forms.TextInput(attrs={
+    state = forms.CharField( label="State", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'State'}), required=False)
-    zipcode = forms.CharField( label="", widget=forms.TextInput(attrs={
+    zipcode = forms.CharField( label="Zipcode", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Zip Code'}), required=False)
-    country = forms.CharField( label="", widget=forms.TextInput(attrs={
+    country = forms.CharField( label="Country", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Country'}),required=False)
 
@@ -169,6 +169,7 @@ class UpdateUserForm(UserChangeForm):
     password = None
     username = forms.CharField(
         max_length=150,
+        label='User Name',
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg mb-3',
             'placeholder': 'Username',
@@ -177,6 +178,7 @@ class UpdateUserForm(UserChangeForm):
         help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
     )
     email = forms.EmailField(
+        label='Email Address',
         widget=forms.EmailInput(attrs={
             'class': 'form-control form-control-lg mb-3',
             'placeholder': 'Email Address'
@@ -185,6 +187,7 @@ class UpdateUserForm(UserChangeForm):
     )
 
     first_name = forms.CharField(
+        label='First Name',
         max_length=150,
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg mb-3',
@@ -194,6 +197,7 @@ class UpdateUserForm(UserChangeForm):
     )
 
     last_name = forms.CharField(
+        label='Last Name',
         max_length=150,
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg mb-3',
@@ -208,8 +212,8 @@ class UpdateUserForm(UserChangeForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field in self.fields.values():
-            field.label = ""  # Remove labels
+        # for field in self.fields.values():
+        #     field.label = ""  # Remove labels
 
     def clean_username(self):
         username = self.cleaned_data.get('username')

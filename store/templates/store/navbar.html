@@ -12,19 +12,19 @@
 
                 <li class="nav-item"><a class="nav-link active" aria-current="page" href="{% url 'search' %}">Search</a>
                 </li>
-                {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">Profile</a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{% url 'update_user' %}">User Profile</a></li>
-                            <li>
-                                <hr class="dropdown-divider"/>
-                            </li>
-                            <li><a class="dropdown-item" href="{% url 'update_info' %}">User Info</a></li>
-                        </ul>
-                    </li>
-                {% endif %}
+{#                {% if user.is_authenticated %}#}
+{#                    <li class="nav-item dropdown">#}
+{#                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"#}
+{#                           data-bs-toggle="dropdown" aria-expanded="false">Profile</a>#}
+{#                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">#}
+{#                            <li><a class="dropdown-item" href="{% url 'update_user' %}">User Profile</a></li>#}
+{#                            <li>#}
+{#                                <hr class="dropdown-divider"/>#}
+{#                            </li>#}
+{#                            <li><a class="dropdown-item" href="{% url 'update_info' %}">User Info</a></li>#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                {% endif %}#}
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
@@ -51,11 +51,45 @@
                 </a>
 
                 {% if user.is_authenticated %}
-                    <a href="{% url 'logout' %}" class="btn btn-outline-dark">Logout</a>
+
+                    <li class="nav-item dropdown list-unstyled ">
+
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" id="navbarDropdown" href="#"
+                           role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-5"></i>
+                            {{ user.first_name }} {{ user.last_name }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'update_user' %}">
+                                    <i class="bi bi-person me-2"></i>User Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'update_info' %}">
+                                    <i class="bi bi-info-circle me-2"></i>User Info
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{% url 'logout' %}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-dark me-2">Login</a>
-                    <a href="{% url 'register' %}" class="btn btn-dark">Register</a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-dark me-2">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-dark">
+                        <i class="bi bi-person-plus me-1"></i>Register
+                    </a>
                 {% endif %}
+
             </div>
         </div>
     </div>

@@ -21,7 +21,7 @@ def search(request):
         if searched_products:
             messages.success(request, f'You have searched for "{searched}"')
         else:
-            messages.info(request, f'No products found for "{searched}"')
+            messages.error(request, f'No products found for "{searched}"')
 
         return render(request, 'store/search.html', {'searched': searched, 'products': searched_products})
 
@@ -184,7 +184,7 @@ def login_user(request):
             except Profile.DoesNotExist:
                 pass  # Handle case where profile doesn't exist
 
-            messages.success(request, f'Welcome back, {user.username}!')
+            messages.success(request, f'Welcome to Changiu, {user.username}!')
             return redirect('home')
 
     else:
