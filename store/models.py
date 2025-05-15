@@ -1,7 +1,6 @@
 from django.db import models
 import datetime
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
 
 # Create customer profile
 class Profile(models.Model):
@@ -19,17 +18,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
-
-# create a user Profile by default when user signs up
-# def create_profile(sender, instance, created,**kwargs):
-#     if created:
-#         user_profile = Profile(user=instance)
-#         user_profile.save()
-#
-# # Automate the profile thing
-# post_save.connect(create_profile, sender=User)
-
-
 
 
 #Categories of Products
@@ -61,6 +49,7 @@ class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     description = models.TextField()
     image = models.ImageField(upload_to='uploads/products/')
+    stock = models.IntegerField(default=0)
 
     # Add Sale Stuff
     is_sale = models.BooleanField(default=False)
