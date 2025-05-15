@@ -1,0 +1,146 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Search Products{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Search Products</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Find exactly what you're looking for</p>
+            
+            <!-- Search Form -->
+            <div class="row justify-content-center mt-4">
+                <div class="col-lg-6">
+                    <form action="{% url 'search' %}" method="POST" class="d-flex">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   placeholder="Search products..." 
+                                   name="searched"
+                                   value="{{ searched|default:'' }}"
+                                   aria-label="Search products">
+                            <button class="btn btn-light px-4" type="submit">
+                                <i class="bi-search me-2"></i>Search
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container py-5">
+    {% if searched %}
+        <!-- Search Results Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3">Search Results</h2>
+                <p class="text-muted">Showing results for "{{ searched }}"</p>
+            </div>
+        </div>
+
+        {% if products %}
+            <!-- Products Grid -->
+            <div class="row g-4">
+                {% for product in products %}
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm">
+                        {% if product.is_sale %}
+                            <div class="badge bg-danger text-white position-absolute" 
+                                 style="top: 0.5rem; right: 0.5rem">
+                                Sale
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Product Image -->
+                        <div class="overflow-hidden" style="height: 200px;">
+                            <img class="card-img-top h-100 w-100" 
+                                 src="{{ product.image.url }}" 
+                                 alt="{{ product.name }}"
+                                 style="object-fit: cover;">
+                        </div>
+                        
+                        <!-- Product Details -->
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-2">{{ product.name }}</h5>
+                            
+                            {% if product.is_sale %}
+                                <!-- Sale Price -->
+                                <div class="mb-2">
+                                    <span class="text-muted text-decoration-line-through me-2">
+                                        ${{ product.price }}
+                                    </span>
+                                    <span class="text-danger fw-bold">${{ product.sale_price }}</span>
+                                </div>
+                                <!-- Rating -->
+                                <div class="d-flex text-warning mb-2">
+                                    {% for i in '12345' %}
+                                        <i class="bi-star-fill small"></i>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <div class="mb-2">
+                                    <span class="fw-bold">${{ product.price }}</span>
+                                </div>
+                            {% endif %}
+                            
+                            <p class="text-muted small mb-0">
+                                {{ product.description|truncatechars:100 }}
+                            </p>
+                        </div>
+                        
+                        <!-- Product Actions -->
+                        <div class="card-footer bg-transparent border-0 pt-0">
+                            <a href="{% url 'product' product.id %}" 
+                               class="btn btn-outline-dark w-100">
+                                <i class="bi-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- No Results -->
+            <div class="text-center py-5">
+                <i class="bi-search display-1 text-muted mb-4"></i>
+                <h3>No Results Found</h3>
+                <p class="text-muted mb-4">
+                    We couldn't find any products matching "{{ searched }}". 
+                    Try different keywords or browse our categories.
+                </p>
+                <a href="{% url 'category_summary' %}" class="btn btn-dark">
+                    Browse Categories
+                </a>
+            </div>
+        {% endif %}
+    {% else %}
+        <!-- Initial Search State -->
+        <div class="text-center py-5">
+            <i class="bi-search display-1 text-muted mb-4"></i>
+            <h3>Start Your Search</h3>
+            <p class="text-muted mb-4">
+                Type in the search box above to find products you're looking for.
+            </p>
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="card-title mb-3">Popular Categories</h5>
+                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                <a href="{% url 'category' 'Toys' %}" class="btn btn-outline-dark">Toys</a>
+                                <a href="{% url 'category' 'Laptops' %}" class="btn btn-outline-dark">Laptops</a>
+                                <a href="{% url 'category_summary' %}" class="btn btn-outline-dark">All Categories</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

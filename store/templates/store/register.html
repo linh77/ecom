@@ -1,0 +1,63 @@
+{% extends 'store/base.html' %}
+
+{% block content %}
+<!-- Header -->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Register</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Create your account</p>
+        </div>
+    </div>
+</header>
+
+<!-- Register Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <form method="POST" action="{% url 'register' %}">
+                            {% csrf_token %}
+                            
+                            {% for field in form %}
+                                <div class="mb-4">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ field.errors|join:", " }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-dark btn-lg">Create Account</button>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <span class="text-muted">Already have an account?</span>
+                                <a href="{% url 'login' %}" class="text-dark fw-bold text-decoration-none ms-2">Sign In</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

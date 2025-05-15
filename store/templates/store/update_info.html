@@ -1,0 +1,70 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Update Profile Information{% endblock %}
+
+{% block content %}
+    <!-- Header -->
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">Update Profile Information</h1>
+                <p class="lead fw-normal text-white-50 mb-0">Manage your shipping and contact details</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Form Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-8 col-lg-6">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+                                 role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="card border-0 shadow-lg">
+                        <div class="card-body p-5">
+                            <form method="POST" action="{% url 'update_info' %}" class="needs-validation" novalidate>
+                                {% csrf_token %}
+
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        {% for error in form.non_field_errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                {% for field in form %}
+                                    <div class="mb-4">
+                                        {% if field.help_text %}
+                                            <small class="form-text text-muted mb-2 d-block">{{ field.help_text|safe }}</small>
+                                        {% endif %}
+                                        {{ field }}
+                                        {% if field.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ field.errors|join:", " }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-dark btn-lg">Update Information</button>
+                                    <a href="{% url 'update_user' %}" class="btn btn-outline-dark btn-lg">Back to Profile</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

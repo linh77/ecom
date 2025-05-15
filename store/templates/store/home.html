@@ -1,0 +1,113 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Welcome to Changiu{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<header class="bg-dark py-5 mb-5">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bolder text-white mb-3">Shop in Style</h1>
+                <p class="lead fw-normal text-white-50 mb-4">Discover amazing products at incredible prices. Find what you need, sell what you don't.</p>
+                <div class="d-flex">
+                    <a class="btn btn-outline-light btn-lg px-4 me-3" href="#products">
+                        Browse Products
+                    </a>
+                    <a class="btn btn-light btn-lg px-4" href="{% url 'category_summary' %}">
+                        View Categories
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Products Section -->
+<section class="py-5" id="products">
+    <div class="container px-4 px-lg-5">
+        <!-- Section Header -->
+        <div class="text-center mb-5">
+            <h2 class="fw-bolder mb-3">Featured Products</h2>
+            <div class="border-bottom border-2 w-25 mx-auto"></div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
+            {% for product in products %}
+            <div class="col mb-5">
+                <div class="card h-100 border-0 shadow-sm">
+                    {% if product.is_sale %}
+                    <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+                        Sale
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Product Image -->
+                    <div class="overflow-hidden" style="height: 200px;">
+                        <img class="card-img-top h-100 w-100" src="{{ product.image.url }}" 
+                             alt="{{ product.name }}" style="object-fit: cover;">
+                    </div>
+
+                    <!-- Product Details -->
+                    <div class="card-body p-4">
+                        <div class="text-center">
+                            <h5 class="fw-bolder mb-2">{{ product.name }}</h5>
+                            
+                            {% if product.is_sale %}
+                            <!-- Review Stars for Sale Items -->
+                            <div class="d-flex justify-content-center small text-warning mb-2">
+                                {% for i in '12345' %}
+                                <div class="bi-star-fill"></div>
+                                {% endfor %}
+                            </div>
+                            <!-- Sale Price -->
+                            <div class="mb-2">
+                                <span class="text-muted text-decoration-line-through me-2">${{ product.price }}</span>
+                                <span class="text-danger fw-bold">${{ product.sale_price }}</span>
+                            </div>
+                            {% else %}
+                            <!-- Regular Price -->
+                            <div class="mb-2">
+                                <span class="fw-bold">${{ product.price }}</span>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Description -->
+                            <p class="small text-muted mb-0">{{ product.description|truncatechars:100 }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Product Actions -->
+                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                        <div class="text-center">
+                            <a class="btn btn-outline-dark" href="{% url 'product' product.id %}">
+                                <i class="bi-eye me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+{#<section class="bg-light py-5">#}
+{#    <div class="container px-4 px-lg-5">#}
+{#        <div class="row gx-4 gx-lg-5 justify-content-center">#}
+{#            <div class="col-md-8 col-lg-6 text-center">#}
+{#                <h3 class="fw-bolder mb-3">Stay Updated</h3>#}
+{#                <p class="text-muted mb-4">Subscribe to our newsletter for the latest products and deals!</p>#}
+{#                <form class="d-flex justify-content-center">#}
+{#                    <div class="input-group">#}
+{#                        <input class="form-control" type="email" placeholder="Enter your email..." aria-label="Enter your email...">#}
+{#                        <button class="btn btn-dark" type="button">Subscribe</button>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#</section>#}
+{% endblock %}

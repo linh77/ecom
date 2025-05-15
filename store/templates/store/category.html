@@ -1,0 +1,118 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ category.name|title }} - Category{% endblock %}
+
+{% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">{{ category.name|title }}</h1>
+            <p class="lead fw-normal text-white-50 mb-0">Browse our {{ category.name|lower }} collection</p>
+        </div>
+    </div>
+</header>
+
+<!-- Products Section -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        {% if products %}
+            <!-- Products Grid -->
+            <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 justify-content-center">
+                {% for product in products %}
+                    <div class="col mb-5">
+                        <div class="card h-100 product-card shadow-sm">
+                            <!-- Product badges -->
+                            {% if product.is_sale %}
+                                <div class="badge bg-danger text-white position-absolute" style="top: 0.5rem; right: 0.5rem">
+                                    Sale
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Product image -->
+                            <div class="position-relative overflow-hidden">
+                                <img class="card-img-top" src="{{ product.image.url }}" 
+                                     alt="{{ product.name }}"
+                                     style="object-fit: cover; height: 200px;">
+                                <div class="product-overlay d-flex align-items-center justify-content-center">
+                                    <a href="{% url 'product' product.id %}" 
+                                       class="btn btn-outline-light">View Details</a>
+                                </div>
+                            </div>
+                            
+                            <!-- Product details -->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name -->
+                                    <h5 class="fw-bolder mb-2">{{ product.name }}</h5>
+                                    
+                                    <!-- Product price -->
+                                    <div class="mb-3">
+                                        {% if product.is_sale %}
+                                            <span class="text-muted text-decoration-line-through me-2">
+                                                ${{ product.price }}
+                                            </span>
+                                            <span class="text-danger fw-bold">${{ product.sale_price }}</span>
+                                        {% else %}
+                                            <span class="fw-bold">${{ product.price }}</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <!-- Product description -->
+                                    <p class="text-muted small mb-0">
+                                        {{ product.description|truncatewords:20 }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- Product actions -->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a class="btn btn-outline-dark mt-auto" 
+                                       href="{% url 'product' product.id %}">
+                                        View Product
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- No products message -->
+            <div class="text-center py-5">
+                <h3 class="text-muted">No products found in this category</h3>
+                <a href="{% url 'home' %}" class="btn btn-outline-dark mt-3">
+                    Return to Home
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Add this CSS to your styles -->
+<style>
+.product-card {
+    transition: all 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+.product-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+    opacity: 1;
+}
+</style>
+{% endblock %}
