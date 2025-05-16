@@ -1,12 +1,17 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm,SetPasswordForm
+from django.contrib.auth.forms import UserChangeForm
 from django import forms
 
 from store.models import Profile
 
 
 class LoginForm(forms.Form):
+    '''
+    A form for user login.
+    It includes fields for usernama and password.
+    clean method checks if the username and password are valid.
+    '''
     username = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg',
@@ -44,10 +49,6 @@ class LoginForm(forms.Form):
                     "Please enter a correct username and password. "
                     "Note that both fields may be case-sensitive."
                 )
-            elif not user.is_active:
-                raise forms.ValidationError(
-                    "This account is inactive. Please contact support."
-                )
             self.user = user
         return cleaned_data
 
@@ -56,6 +57,10 @@ class LoginForm(forms.Form):
 
 
 class UserInfoForm(forms.ModelForm):
+    '''
+    A form for updating user information.
+    It includes fields for phone number, address, city, state, zipcode, and country.
+    '''
     phone = forms.CharField(label="Phone Number", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Phone Number'}), required=False)
@@ -85,6 +90,12 @@ class UserInfoForm(forms.ModelForm):
 
 
 class ChangePasswordForm(forms.Form):
+    '''
+    A form for changing the user's password.
+    It includes fields for the current password, new password, and confirmation of the new password.
+    clean methods check if the current password is correct and if the new passwords match.
+    The save method updates the user's password in the database.
+    '''
     current_password = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control form-control-lg mb-3',
@@ -166,6 +177,12 @@ class ChangePasswordForm(forms.Form):
 
 
 class UpdateUserForm(UserChangeForm):
+    '''
+    A form for updating user information.
+    It includes fields for username, email, first name, and last name.
+    The clean methods check if the username and email are unique.
+    The save method updates the user's information in the database.
+    '''
     password = None
     username = forms.CharField(
         max_length=150,
@@ -175,7 +192,7 @@ class UpdateUserForm(UserChangeForm):
             'placeholder': 'Username',
             'autocomplete': 'username'
         }),
-        help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
+        # help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'
     )
     email = forms.EmailField(
         label='Email Address',
@@ -239,6 +256,12 @@ class UpdateUserForm(UserChangeForm):
 
 
 class RegisterForm(forms.Form):
+    '''
+    A form for user registration.
+    It includes fields for first name, last name, username, email, and password.
+    The clean methods check if the username and email are unique, and if the password meets certain criteria.
+    The save method creates a new user and a corresponding profile.
+    '''
     first_name = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg',
@@ -316,6 +339,26 @@ class RegisterForm(forms.Form):
         common_passwords = ['password', '12345678', 'qwerty']
         if password1.lower() in common_passwords:
             raise forms.ValidationError('This password is too common')
+        """
+        --Restrict password--
+        
+        # Check for minimum length
+        if len(password1) < 8:
+            raise forms.ValidationError('Password must be at least 8 characters long')
+        # Check for Uppercase and lowercase letters
+        if not any(char.isupper() for char in password1) or not any(char.islower() for char in password1):
+            raise forms.ValidationError('Password must contain both uppercase and lowercase letters')
+        # Check for digits
+        if not any(char.isdigit() for char in password1):
+            raise forms.ValidationError('Password must contain at least one digit')
+        # Check for special characters
+        if not any(char in "!@#$%^&*()-_=+[]{}|;:',.<>?/" for char in password1):
+            raise forms.ValidationError('Password must contain at least one special character')
+            
+        # Check for similarity to username
+        if self.cleaned_data.get('username').lower() in password1.lower():
+            raise forms.ValidationError('Password is too similar to your username')
+        """
 
         return password1
 
