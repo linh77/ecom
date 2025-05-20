@@ -9,7 +9,7 @@
         <div class="row gx-4 gx-lg-5 align-items-center">
             <div class="col-lg-7">
                 <h1 class="display-4 fw-bolder text-white mb-3">Shop in Style</h1>
-                <p class="lead fw-normal text-white-50 mb-4">Discover amazing products at incredible prices. Find what you need, sell what you don't.</p>
+                <p class="lead fw-normal text-white-50 mb-4">We have the stuff you don't need</p>
                 <div class="d-flex">
                     <a class="btn btn-outline-light btn-lg px-4 me-3" href="#products">
                         Browse Products
@@ -75,6 +75,9 @@
                             
                             <!-- Description -->
                             <p class="small text-muted mb-0">{{ product.description|truncatechars:100 }}</p>
+                            {% if product.stock == 0 %}
+                            <p class="text-danger small">Out of Stock</p>
+                            {% endif %}
                         </div>
                     </div>
 

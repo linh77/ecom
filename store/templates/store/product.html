@@ -3,97 +3,147 @@
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-6">
-            <!-- Product Image Card -->
-            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-6">
+                <!-- Product Image Card -->
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <img src="{{ product.image.url }}" class="img-fluid" alt="{{ product.name }}">
+                </div>
             </div>
-        </div>
-        
-        <div class="col-lg-6">
-            <!-- Product Details Card -->
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4">
-                    <h2 class="fw-bold mb-4">{{ product.name }}</h2>
-                    
-                    {% if product.is_sale %}
-                        <div class="mb-3">
-                            <span class="badge bg-danger px-3 py-2">Sale</span>
-                        </div>
-                        <!-- Product Rating -->
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="text-warning me-2">
-                                <i class="bi-star-fill"></i>
-                                <i class="bi-star-fill"></i>
-                                <i class="bi-star-fill"></i>
-                                <i class="bi-star-fill"></i>
-                                <i class="bi-star-fill"></i>
-                            </div>
-                            <small class="text-muted">(5.0)</small>
-                        </div>
-                        <!-- Price -->
-                        <div class="mb-4">
-                            <span class="text-muted text-decoration-line-through me-2">${{ product.price }}</span>
-                            <span class="fs-3 fw-bold text-danger">${{ product.sale_price }}</span>
-                        </div>
-                    {% else %}
-                        <div class="mb-4">
-                            <span class="fs-3 fw-bold">${{ product.price }}</span>
-                        </div>
-                    {% endif %}
-                    
-                    <!-- Description -->
-                    <p class="text-muted mb-4">{{ product.description }}</p>
 
-                    <!-- Quantity Selector -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Quantity</label>
-                        <label for="qty-cart"></label><select class="form-select w-auto" id="qty-cart">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="d-grid gap-2 d-md-flex">
-                        <button type="button" value="{{ product.id }}" 
-                                class="btn btn-dark btn-lg flex-grow-1" id="add-cart">
-                            <i class="bi-cart-plus me-2"></i>Add to Cart
-                        </button>
-                        <a href="{% url 'home' %}" 
-                           class="btn btn-outline-secondary btn-lg">
-                            <i class="bi-arrow-left me-2"></i>Continue Shopping
-                        </a>
+            <div class="col-lg-6">
+                <!-- Product Details Card -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h2 class="fw-bold mb-4">{{ product.name }}</h2>
+
+                        {% if product.is_sale %}
+                            <div class="mb-3">
+                                <span class="badge bg-danger px-3 py-2">Sale</span>
+                            </div>
+                            <!-- Product Rating -->
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="text-warning me-2">
+                                    <i class="bi-star-fill"></i>
+                                    <i class="bi-star-fill"></i>
+                                    <i class="bi-star-fill"></i>
+                                    <i class="bi-star-fill"></i>
+                                    <i class="bi-star-fill"></i>
+                                </div>
+                                <small class="text-muted">(5.0)</small>
+                            </div>
+                            <!-- Price -->
+                            <div class="mb-4">
+                                <span class="text-muted text-decoration-line-through me-2">${{ product.price }}</span>
+                                <span class="fs-3 fw-bold text-danger">${{ product.sale_price }}</span>
+                            </div>
+                        {% else %}
+                            <div class="mb-4">
+                                <span class="fs-3 fw-bold">${{ product.price }}</span>
+                            </div>
+                        {% endif %}
+
+                        <!-- Description -->
+                        <p class="text-muted mb-4">{{ product.description }}</p>
+
+{#                        <!-- Quantity Selector -->#}
+{#                        <div class="mb-4">#}
+{#                            <label class="form-label fw-bold">Quantity</label>#}
+{#                            <label for="qty-cart"></label><select class="form-select w-auto" id="qty-cart">#}
+{#                            <option value="1">1</option>#}
+{#                            <option value="2">2</option>#}
+{#                            <option value="3">3</option>#}
+{#                        </select>#}
+{#                        </div>#}
+                    <!-- Quantity Selector with Maximum Limit -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Quantity</label>
+                            <select class="form-select w-auto" id="qty-cart">
+                                {% if product.stock > 0 %}
+                                    {% with max_qty=product.stock %}
+                                        {% for i in "123456789"|make_list %}
+                                            {% if forloop.counter <= max_qty %}
+                                                <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endwith %}
+                                {% else %}
+                                    <option value="0" disabled>Out of Stock</option>
+                                {% endif %}
+                            </select>
+                        </div>
+
+
+                        <!-- Stock Status Section -->
+                        <div class="mb-3">
+                            {% if product.stock > 0 %}
+                                {% if product.stock <= 5 %}
+                                    <!-- Low Stock Warning -->
+                                    <div class="d-flex align-items-center text-warning mb-2">
+                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        <span>Only {{ product.stock }} left in stock - order soon</span>
+                                    </div>
+                                {% else %}
+                                    <!-- In Stock -->
+                                    <div class="d-flex align-items-center text-success mb-2">
+                                        <i class="bi bi-check-circle-fill me-2"></i>
+                                        <span> {{ product.stock }} Available</span>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
+
+
+                            <!-- Action Buttons -->
+                            <div class="d-grid gap-2 d-md-flex">
+                                {% if product.stock > 0 %}
+                                    <button type="button" value="{{ product.id }}"
+                                            class="btn btn-dark btn-lg flex-grow-1" id="add-cart">
+                                        <i class="bi-cart-plus me-2"></i>Add to Cart
+                                    </button>
+                                {% else %}
+                                    <button class="btn btn-secondary" disabled>
+                                        Out of Stock
+                                    </button>
+
+                                {% endif %}
+                                <a href="{% url 'home' %}"
+                                   class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi-arrow-left me-2"></i>Continue Shopping
+                                </a>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <br><br><br><br><br><br><br>
-</div>
+     <br><br><br><br><br>
+
 
 <script>
-$(document).on('click', '#add-cart', function (e) {
-    e.preventDefault();
-    $.ajax({
-        type: 'POST',
-        url: '{% url 'cart_add' %}',
-        data: {
-            product_id: $('#add-cart').val(),
-            product_qty: $('#qty-cart option:selected').text(),
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            action: 'post'
-        },
-        success: function (json) {
-            document.getElementById('cart_quantity').textContent = json.qty
-            location.reload();
-        },
-        error: function (xhr, status, error) {
-            console.error(error);
-        }
+    $(document).on('click', '#add-cart', function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url 'cart_add' %}',
+            data: {
+                product_id: $('#add-cart').val(),
+                product_qty: $('#qty-cart option:selected').text(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function (json) {
+                document.getElementById('cart_quantity').textContent = json.qty
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error(error);
+            }
+        });
     });
-});</script>
+</script>
 {% endblock %}

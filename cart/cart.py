@@ -2,6 +2,9 @@ from store.models import Product, Profile
 
 
 class Cart:
+    '''
+    A shopping cart class that handles the cart logic
+    '''
     def __init__(self, request):
         self.session = request.session
         #Get request

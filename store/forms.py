@@ -7,17 +7,17 @@ from store.models import Profile
 
 
 class LoginForm(forms.Form):
-    '''
+    """
     A form for user login.
-    It includes fields for usernama and password.
+    It includes fields for username and password.
     clean method checks if the username and password are valid.
-    '''
+    """
     username = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg',
             'placeholder': 'Username',
-            'autocomplete': 'username',  # Add autocomplete for better UX
-            'autofocus': True  # Automatically focus on username field
+            'autocomplete': 'username',
+            'autofocus': True
         })
     )
 
@@ -25,11 +25,11 @@ class LoginForm(forms.Form):
         widget=forms.PasswordInput(attrs={
             'class': 'form-control form-control-lg',
             'placeholder': 'Password',
-            'autocomplete': 'current-password'  # Add autocomplete for better UX
+            'autocomplete': 'current-password'
         })
     )
 
-    remember_me = forms.BooleanField(  # Add remember me functionality
+    remember_me = forms.BooleanField(
         required=False,
         initial=True,
         widget=forms.CheckboxInput(attrs={
@@ -57,10 +57,10 @@ class LoginForm(forms.Form):
 
 
 class UserInfoForm(forms.ModelForm):
-    '''
+    """
     A form for updating user information.
     It includes fields for phone number, address, city, state, zipcode, and country.
-    '''
+    """
     phone = forms.CharField(label="Phone Number", widget=forms.TextInput(attrs={
         'class': 'form-control',
         'placeholder': 'Phone Number'}), required=False)
@@ -90,12 +90,12 @@ class UserInfoForm(forms.ModelForm):
 
 
 class ChangePasswordForm(forms.Form):
-    '''
+    """
     A form for changing the user's password.
     It includes fields for the current password, new password, and confirmation of the new password.
     clean methods check if the current password is correct and if the new passwords match.
     The save method updates the user's password in the database.
-    '''
+    """
     current_password = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control form-control-lg mb-3',
@@ -177,12 +177,12 @@ class ChangePasswordForm(forms.Form):
 
 
 class UpdateUserForm(UserChangeForm):
-    '''
+    """
     A form for updating user information.
     It includes fields for username, email, first name, and last name.
     The clean methods check if the username and email are unique.
     The save method updates the user's information in the database.
-    '''
+    """
     password = None
     username = forms.CharField(
         max_length=150,
@@ -256,12 +256,12 @@ class UpdateUserForm(UserChangeForm):
 
 
 class RegisterForm(forms.Form):
-    '''
+    """
     A form for user registration.
     It includes fields for first name, last name, username, email, and password.
     The clean methods check if the username and email are unique, and if the password meets certain criteria.
     The save method creates a new user and a corresponding profile.
-    '''
+    """
     first_name = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'form-control form-control-lg',
@@ -287,6 +287,13 @@ class RegisterForm(forms.Form):
             'class': 'form-control form-control-lg',
             'placeholder': 'Username',
             'autocomplete': 'username'
+        })
+    )
+    phone = forms.CharField(
+        label='Phone Number',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control form-control-lg mb-3',
+            'placeholder': 'Phone Number'
         })
     )
 
@@ -328,6 +335,12 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError('This email is already registered')
         return email
 
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if Profile.objects.filter(phone=phone).exists():
+            raise forms.ValidationError('This phone number is already registered')
+        return phone
+
     def clean_password1(self):
         password1 = self.cleaned_data.get('password1')
 
@@ -340,7 +353,7 @@ class RegisterForm(forms.Form):
         if password1.lower() in common_passwords:
             raise forms.ValidationError('This password is too common')
         """
-        --Restrict password--
+        # --Restrict password--
         
         # Check for minimum length
         if len(password1) < 8:
@@ -358,6 +371,7 @@ class RegisterForm(forms.Form):
         # Check for similarity to username
         if self.cleaned_data.get('username').lower() in password1.lower():
             raise forms.ValidationError('Password is too similar to your username')
+        
         """
 
         return password1
@@ -392,10 +406,11 @@ class RegisterForm(forms.Form):
             email=data['email'],
             password=data['password1'],
             first_name=data['first_name'],
-            last_name=data['last_name']
+            last_name=data['last_name'],
+
         )
 
         # Create user profile
-        Profile.objects.create(user=user)
+        Profile.objects.create(user=user,phone=data['phone'])
 
         return user
